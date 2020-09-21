@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link href="{% static 'tinymce/css/prism.css' %}" rel="stylesheet">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+
+<nav>
+    <div class="nav-wrapper">
+        <a href="#" class="brand-logo center">My Todo App</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="sass.html"></a></li>
+            <li><a href="badges.html"></a></li>
+            <li><a href="collapsible.html"></a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+
+
+    <div class="row">
+        <form action="{% url 'main:add_task' %}" method="post" class="col s12">
+            {% csrf_token %}
+            <div class="row">
+                <div class="input-field col s8">
+                    <i class="material-icons prefix">mode_edit</i>
+                    <textarea name="task_text" id="icon_prefix2" class="materialize-textarea"></textarea>
+                    <label for="icon_prefix2">New Task</label>
+                </div>
+                <button style="margin:20px" class="btn waves-effect waves-light" type="submit" name="action">Add
+                    <i class="material-icons right">send</i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+
+    <table class="highlight">
+        <thead>
+        <tr>
+            <th>Task</th>
+            <th style="text-align: center;"></th>
+            <th style="text-align: center;">Status</thc>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td class="col s12">{{ task.text|safe }}
+            </td>
+            <td>
+                {% if task.status == 'Not Started' %}
+                <form action="{% url 'main:open_task' task.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="waves-effect light-green accent-4 btn-small right">open</button>
+                </form>
+                {% endif %}
+                {% if task.status == 'In Progress' %}
+                <form action="{% url 'main:close_task' task.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="waves-effect waves-light orange darken-4 btn-small right">close</button>
+                </form>
+                {% endif %}
+            </td>
+            <td style="text-align: center;">{{ task.status }}</td>
+            <form action="delete_task/{{ task.id }}" method="post">
+                {% csrf_token %}
+                <td>
+                    <button class="waves-effect red darken-4 btn" type="submit" name="action">Delete</button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+<script src="{% static 'tinymce/js/prism.js' %}"></script>
+
+</html>
